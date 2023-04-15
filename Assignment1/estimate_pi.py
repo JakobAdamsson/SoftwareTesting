@@ -31,5 +31,8 @@ if __name__ == "__main__":
         args.out_file.parent.mkdir(parents=True, exist_ok=True)
 
     pi = estimate_pi(args.iterations)
-    print(pi)
-    PiFileWriter.write(str(pi), args.out_file)
+
+    if args.out_file:
+        PiFileWriter.write(str(pi), args.out_file)
+    else:
+        print(pi)
