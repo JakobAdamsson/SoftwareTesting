@@ -33,7 +33,7 @@ class TestEstimatePi(unittest.TestCase):
 
     def test_estimate_pi_loe_to_one(self) -> None:
         """
-        A method that tests if the estimate_pi function returns 0 when the value is less than 1.
+        A method that tests if the estimate_pi function returns 0 when the value is less than, or equal to 1.
         Meaning count will never be incremebted -> 4*0/1 = 0
         """
         with patch("random.uniform", return_value=1):
