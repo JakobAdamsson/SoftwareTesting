@@ -4,22 +4,8 @@ import json
 import orjson
 import msgspec
 import time
-
+from fuzzing_json import random_data_generator
 from tqdm import tqdm
-
-
-def random_data_generator() -> None:
-    """
-    Function that generates random data with yeild
-    Yield creates a generator, which is a function that can be called multiple times
-
-    Yields:
-        Iterator[dict]: A dictionary with two fields, each with a random integer
-        A generator is created each time this function is called
-    """
-    while True:
-        yield {'field_1': random.randint(0, 100),
-               'field_2': random.randint(100, 200)}  # maybe you have a better idea
 
 
 def main() -> None:
@@ -32,7 +18,6 @@ def main() -> None:
     for _ in tqdm(range(1000)):
         # Get next data (since its a generator, it will be different each time)
         data = next(data_generator)
-        print(data)
         try:
             # Try to encode data with each library
             # Try to encode with json

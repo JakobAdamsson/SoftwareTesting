@@ -84,7 +84,7 @@ def random_nested_array() -> list:
     return [random.choice([random_json_string(), random_json_number(), random_boolean(), random_json_null()]) for _ in range(random.randint(0, 100))]
 
 
-def random_data_generator() -> dict:
+def random_list_generator(nbr_of_json_objects: int) -> list:
     """
     A method that generates random data that can be used to test the json libraries
     The function will yield back the result to be tested in fuzzer.py
@@ -102,12 +102,10 @@ def random_data_generator() -> dict:
         "NestedArray": [10, 20, True, "Nested Array"]
     }
     """
-    random.seed(time.time())
-    random_number_for_dict = random.randint(0, 100)
-    print(f"Random number for dict: {random_number_for_dict}")
+    print(f"Random number for dict: {nbr_of_json_objects}")
 
-    randomized_json_dict = {}
-    for _ in range(random_number_for_dict):
+    randomized_json_list = []
+    for _ in range(nbr_of_json_objects):
         random.seed(time.time())
 
         random_value_function = random.choice([
@@ -124,16 +122,17 @@ def random_data_generator() -> dict:
         value = random_value_function()
 
         # Loop until we have a unique key
-        while key in randomized_json_dict:
+        while key in randomized_json_list:
             key = random_json_string()
 
-        randomized_json_dict[key] = value
+        randomized_json_list.append({key: value})
 
-    yield randomized_json_dict
-
-
-def main():
-    print(next(random_data_generator()))
+    return randomized_json_list
 
 
-main()
+def random_data_generator() -> None:
+    random.seed(time.time())
+    json_list = random_list_generator(1000)
+    for json_object in json_list:
+        print(json_object)
+        yield json_object
