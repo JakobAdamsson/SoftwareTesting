@@ -6,8 +6,60 @@ Acronym: jaad19
 Student email: jaad19@student.bth.se
 """
 
+# Imports
 import random
 import time
+import sys
+
+
+def random_letter_from_unicode_block(range_s: int, range_e: int) -> str:
+    """A function that returns a random letter from a unicode block using chr
+
+    Args:
+        range_s (int): Start of the unicode block
+        range_e (int): End of the unicode block
+
+    Returns:
+        str: A random letter from the unicode block within range_s and range_e
+    """
+    return chr(random.randint(range_s, range_e))
+
+
+def random_json_unicode_string() -> str:
+    """Generates a random unicode string
+    Informarion about the different unicode characters are gathered from: https://en.wikipedia.org/wiki/Latin_script_in_Unicode
+
+    Returns:
+        str: String with unicode characters
+    """
+    unicode_blocks = [
+        ("Basic Latin", 0x0000, 0x007F),
+        ("Latin-1 Supplement", 0x0080, 0x00FF),
+        ("Latin Extended-A", 0x0100, 0x017F),
+        ("Latin Extended-B", 0x0180, 0x024F),
+        ("IPA Extensions", 0x0250, 0x02AF),
+        ("Spacing Modifier Letters", 0x02B0, 0x02FF),
+        ("Phonetic Extensions", 0x1D00, 0x1D7F),
+        ("Phonetic Extensions Supplement", 0x1D80, 0x1DBF),
+        ("Latin Extended Additional", 0x1E00, 0x1EFF),
+        ("Superscripts and Subscripts", 0x2070, 0x209F),
+        ("Letterlike Symbols", 0x2100, 0x214F),
+        ("Number Forms", 0x2150, 0x218F),
+        ("Latin Extended-C", 0x2C60, 0x2C7F),
+        ("Latin Extended-D", 0xA720, 0xA7FF),
+        ("Latin Extended-E", 0xAB30, 0xAB6F),
+        ("Alphabetic Presentation Forms (Latin ligatures)", 0xFB00, 0xFB4F),
+        ("Halfwidth and Fullwidth Forms", 0xFF00, 0xFFEF),
+        ("Latin Extended-F", 0x10780, 0x107BF),
+        ("Latin Extended-G", 0x1DF00, 0x1DFFF),
+    ]
+    lenght_of_string = random.randint(1, 100)
+    unicoded_string = ""
+    for _ in range(lenght_of_string):
+        blockname, range_s, range_e = random.choice(unicode_blocks)
+        random_letter = random_letter_from_unicode_block(range_s, range_e)
+        unicoded_string = unicoded_string + random_letter
+    return unicoded_string
 
 
 def random_json_string() -> str:
@@ -28,6 +80,42 @@ def random_json_number() -> int:
         int: A random int
     """
     return random.randint(0, 1000000)
+
+
+def random_json_large_number() -> int:
+    """Generate a large random number
+
+    Returns:
+        int: A random large int
+    """
+    return random.randint(sys.maxsize-100, sys.maxsize)
+
+
+def random_json_small_number() -> int:
+    """Generate a small random number
+
+    Returns:
+    int: A random small int
+    """
+    return random.randint(sys.maxsize, sys.maxsize*100)
+
+
+def random_json_large_float() -> float:
+    """Generate a large random float
+
+    Returns:
+    int: A random large float
+    """
+    return random.uniform(sys.float_info.max/100, sys.float_info.max)
+
+
+def random_json_small_float() -> float:
+    """Generate a small random float
+
+    Returns:
+    int: A random small float
+    """
+    return random.uniform(sys.float_info.min, sys.float_info.min*100)
 
 
 def random_json_float() -> float:
@@ -81,7 +169,16 @@ def random_nested_array() -> list:
     Returns:
         list: A list of random json data
     """
-    return [random.choice([random_json_string(), random_json_number(), random_boolean(), random_json_null()]) for _ in range(random.randint(0, 100))]
+    return [random.choice([random_json_string(),
+            random_json_number(),
+            random_json_float(),
+            random_boolean(),
+            random_json_null(),
+            random_json_large_float(),
+            random_json_large_number(),
+            random_json_small_number(),
+            random_json_small_float(),
+            random_json_unicode_string()]) for _ in range(random.randint(0, 100))]
 
 
 def random_list_generator(nbr_of_json_objects: int) -> list:
@@ -114,7 +211,13 @@ def random_list_generator(nbr_of_json_objects: int) -> list:
             random_json_float,
             random_boolean,
             random_json_null,
-            random_nested_array
+            random_nested_array,
+            random_json_large_float,
+            random_json_large_number,
+            random_json_small_number,
+            random_json_small_float,
+            random_json_unicode_string
+
         ])
 
         # Generate a unique key and the value
@@ -132,7 +235,7 @@ def random_list_generator(nbr_of_json_objects: int) -> list:
 
 def random_data_generator() -> None:
     random.seed(time.time())
-    json_list = random_list_generator(1000)
+    json_list = random_list_generator(10000)
     for json_object in json_list:
-        print(json_object)
+        # print(json_object)
         yield json_object
