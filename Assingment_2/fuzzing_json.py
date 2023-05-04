@@ -199,9 +199,10 @@ def random_list_generator(nbr_of_json_objects: int) -> list:
         "NestedArray": [10, 20, True, "Nested Array"]
     }
     """
-    print(f"Random number for dict: {nbr_of_json_objects}")
+    print(f"Objects being generated -> {nbr_of_json_objects}")
 
     randomized_json_list = []
+    randomized_list = []
     for _ in range(nbr_of_json_objects):
         random.seed(time.time())
 
@@ -229,13 +230,14 @@ def random_list_generator(nbr_of_json_objects: int) -> list:
             key = random_json_string()
 
         randomized_json_list.append({key: value})
+        randomized_list.append(value)
 
-    return randomized_json_list
+    return randomized_json_list, randomized_list
 
 
 def random_data_generator() -> None:
     random.seed(time.time())
-    json_list = random_list_generator(10000)
-    for json_object in json_list:
-        # print(json_object)
-        yield json_object
+    json_list, random_list = random_list_generator(10000)
+    joined_lits = json_list + random_list
+    for item in joined_lits:
+        yield item

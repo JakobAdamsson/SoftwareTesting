@@ -9,14 +9,28 @@ from tqdm import tqdm
 
 
 def clear_file() -> None:
+    """
+    Function that clears the file
+    """
     with open('mismatches.txt', 'w') as f:
+        f.write('')
+    with open('exeptions.txt', 'w') as f:
         f.write('')
 
 
-def write_to_file(lib1: str, lib2: str, data: dict, lib1_endcode, lib2_encode) -> None:
-    with open('mismatches.txt', 'a') as f:
-        f.write(
-            f'{"="*150}\n{lib1} and {lib2} mismatch on data: {data}\n{lib1}encode: {lib1_endcode}\n{lib2}encode: {lib2_encode} \n{"="*150}')
+def write_to_file(lib1: str = None, lib2: str = None, data: dict = None, lib1_encode=None, lib2_encode=None, exeption: str = None) -> None:
+    """
+    Writes content to file
+    """
+    if not exeption:
+        with open('mismatches.txt', 'a') as f:
+            if not exeption:
+                f.write(
+                    f'{"="*150}\n{lib1} and {lib2} mismatch on data: {data}\n{lib1}encode: {lib1_encode}\n{lib2}encode: {lib2_encode} \n{"="*150}')
+    else:
+        with open("exeptions.txt", "a") as f:
+            f.write(
+                f'{"="*150}\nExeption: {exeption}\nData that could not be encoded:\n{data}{"="*150}\n')
 
 
 def main() -> None:
@@ -45,8 +59,7 @@ def main() -> None:
         # If there is an exception, add it to the list of exceptions
         except Exception as exception:
             exeptions += [(exception, data)]
-            with open('exceptions.txt', 'a') as file:
-                file.write(f'{exception} {data}\n')
+            write_to_file(exeption=exception, data=data)
 
         # If there is no exception, check if the outputs are the same for all the libraries
         else:
