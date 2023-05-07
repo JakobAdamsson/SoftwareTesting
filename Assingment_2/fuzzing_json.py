@@ -25,6 +25,42 @@ def random_letter_from_unicode_block(range_s: int, range_e: int) -> str:
     return chr(random.randint(range_s, range_e))
 
 
+def random_list_nested_generator(current_depth=0, max_depth=5) -> list:
+    if current_depth >= max_depth:
+        return random.choice(
+            [
+                random_json_string(),
+                random_json_number(),
+                random_json_float(),
+                random_boolean(),
+                random_json_null(),
+                random_json_large_float(),
+                random_json_large_number(),
+                random_json_small_number(),
+                random_json_small_float(),
+                random_json_unicode_string(),
+            ]
+        )
+
+    structure_type = random.choice(["list", "dict"])
+
+    if structure_type == "list":
+        nested_list = [
+            random_list_nested_generator(current_depth + 1, max_depth)
+            for _ in range(random.randint(1, 5))
+        ]
+        return nested_list
+
+    elif structure_type == "dict":
+        nested_dict = {
+            random_json_string(): random_list_nested_generator(
+                current_depth + 1, max_depth
+            )
+            for _ in range(random.randint(1, 5))
+        }
+        return nested_dict
+
+
 def random_json_unicode_string() -> str:
     """Generates a random unicode string
     Informarion about the different unicode characters are gathered from: https://en.wikipedia.org/wiki/Latin_script_in_Unicode
@@ -70,7 +106,9 @@ def random_json_string() -> str:
     """
     letters = [chr(i) for i in range(97, 123)]
     numbers = [str(i) for i in range(0, 10)]
-    return "".join(random.choice(letters + numbers) for _ in range(random.randint(0, 100)))
+    return "".join(
+        random.choice(letters + numbers) for _ in range(random.randint(0, 100))
+    )
 
 
 def random_json_number() -> int:
@@ -88,7 +126,7 @@ def random_json_large_number() -> int:
     Returns:
         int: A random large int
     """
-    return random.randint(sys.maxsize-100, sys.maxsize)
+    return random.randint(sys.maxsize - 100, sys.maxsize)
 
 
 def random_json_small_number() -> int:
@@ -97,7 +135,7 @@ def random_json_small_number() -> int:
     Returns:
     int: A random small int
     """
-    return random.randint(sys.maxsize, sys.maxsize*100)
+    return random.randint(sys.maxsize, sys.maxsize * 100)
 
 
 def random_json_large_float() -> float:
@@ -106,7 +144,11 @@ def random_json_large_float() -> float:
     Returns:
     int: A random large float
     """
-    return random.uniform(sys.float_info.max/100, sys.float_info.max)
+    random_float = random.uniform(sys.float_info.max / 100, sys.float_info.max)
+    if "+" in str(random_float):
+        random_float = str(random_float).replace("+", "")
+        return random_float
+    return random_float
 
 
 def random_json_small_float() -> float:
@@ -115,7 +157,7 @@ def random_json_small_float() -> float:
     Returns:
     int: A random small float
     """
-    return random.uniform(sys.float_info.min, sys.float_info.min*100)
+    return random.uniform(sys.float_info.min, sys.float_info.min * 100)
 
 
 def random_json_float() -> float:
@@ -151,7 +193,10 @@ def random_object_string() -> dict:
     Returns:
         dict: A dictionary with random strings
     """
-    return {random_json_string(): random_json_string() for _ in range(random.randint(0, 100))}
+    return {
+        random_json_string(): random_json_string()
+        for _ in range(random.randint(0, 100))
+    }
 
 
 def random_object_number() -> dict:
@@ -160,7 +205,10 @@ def random_object_number() -> dict:
     Returns:
         dict: A dictionary with random numbers
     """
-    return {random_json_string(): random_json_number() for _ in range(random.randint(0, 100))}
+    return {
+        random_json_string(): random_json_number()
+        for _ in range(random.randint(0, 100))
+    }
 
 
 def random_nested_array() -> list:
@@ -169,16 +217,10 @@ def random_nested_array() -> list:
     Returns:
         list: A list of random json data
     """
-    return [random.choice([random_json_string(),
-            random_json_number(),
-            random_json_float(),
-            random_boolean(),
-            random_json_null(),
-            random_json_large_float(),
-            random_json_large_number(),
-            random_json_small_number(),
-            random_json_small_float(),
-            random_json_unicode_string()]) for _ in range(random.randint(0, 100))]
+    return [
+        random.choice([random_json_unicode_string()])
+        for _ in range(random.randint(0, 100))
+    ]
 
 
 def random_list_generator(nbr_of_json_objects: int) -> list:
@@ -206,20 +248,22 @@ def random_list_generator(nbr_of_json_objects: int) -> list:
     for _ in range(nbr_of_json_objects):
         random.seed(time.time())
 
-        random_value_function = random.choice([
-            random_json_string,
-            random_json_number,
-            random_json_float,
-            random_boolean,
-            random_json_null,
-            random_nested_array,
-            random_json_large_float,
-            random_json_large_number,
-            random_json_small_number,
-            random_json_small_float,
-            random_json_unicode_string
-
-        ])
+        random_value_function = random.choice(
+            [
+                random_json_string,
+                random_json_number,
+                random_json_float,
+                random_boolean,
+                random_json_null,
+                random_nested_array,
+                random_json_large_float,
+                random_json_large_number,
+                random_json_small_number,
+                random_json_small_float,
+                random_json_unicode_string,
+                random_list_nested_generator,
+            ]
+        )
 
         # Generate a unique key and the value
         key = random_json_string()
